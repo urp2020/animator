@@ -20,129 +20,142 @@ export default {
         }
     },
     data:{
-        loader:null,
-        scene:null,
-    },
-    mounted(){
-			// when create new FBX 'screen'
-			// load the FBX file simulataneously
+		canvas:null,
+		camera:null,
+		scene:null,
+		rednerer:null,
+		light:null,
+		mixer:null,
+		controls:null,
+		clock:null,
+	},
+	methods:{
+		loadClock:function(){
+			this.clock = new THREE.Clock();
+		},
+		loadCanvas:function(parentsElement){
+			this.canvas = document.createElement('div');
+			parentsElement.appendChild(this.canvas)
+		},
+		loadCamera:function(parentsElement){
+			this.camera = new THREE.PerspectiveCamera( 45, parentsElement.offsetWidth / parentsElement.offsetHeight, 1, 2000 );
+			this.camera.position.set( 100, 200, 300 );
+		},
+		loadScene:function(){
+			this.scene = new THREE.Scene();
+			this.scene.background = new THREE.Color( 0xa0a0a0 );
+			this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+		},
+		loadLight:function(){
+			if(this.scene == null){consoel.log("scene null"); return;}
+			var light;
+			light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+			light.position.set( 0, 200, 0 );
+			this.scene.add( light );
 
-            let self = this
-            const parentsId = "viewer-"+self.screenId
-            const filename = self.filename
-            console.log(filename)
-            var parents = document.getElementById(parentsId)
-            var container, controls;
-			var camera, scene, renderer, light;
+			light = new THREE.DirectionalLight( 0xffffff );
+			light.position.set( 0, 200, 100 );
+			light.castShadow = true;
+			light.shadow.camera.top = 180;
+			light.shadow.camera.bottom = - 100;
+			light.shadow.camera.left = - 120;
+			light.shadow.camera.right = 120;
+			this.scene.add( light );
+		},
+		loadGround:function(){
+			if(this.scene == null){consoel.log("scene null"); return;}
+			var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
+			mesh.rotation.x = - Math.PI / 2;
+			mesh.receiveShadow = true;
+			this.scene.add( mesh );
 
-			var clock = new THREE.Clock();
+			var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
+			grid.material.opacity = 0.2;
+			grid.material.transparent = true;
+			this.scene.add( grid );
+		},
+		loadModel:function(filename){
+			if(this.scene == null){consoel.log("scene null"); return;}
+			let self = this
+			var loader = new FBXLoader();
+			loader.load( filename, function ( object ) {
+				self.mixer = new THREE.AnimationMixer( object );
+				console.log(object)
 
-			var mixer;
+				var action = self.mixer.clipAction( object.animations[ 0 ] );
+				action.play();
 
-			function onWindowResize() {
+				object.traverse( function ( child ) {
 
-				camera.aspect =  parents.offsetWidth/ parents.offsetHeight;
-				camera.updateProjectionMatrix();
+					if ( child.isMesh ) {
 
-				renderer.setSize( parents.offsetWidth ,parents.offsetHeight );
+						child.castShadow = true;
+						child.receiveShadow = true;
 
-			}
-
-			function init() {
-                container = document.createElement( 'div' );
-                parents.appendChild( container );
-
-				camera = new THREE.PerspectiveCamera( 45, parents.offsetWidth / parents.offsetHeight, 1, 2000 );
-				camera.position.set( 100, 200, 300 );
-
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0xa0a0a0 );
-				scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
-
-				light = new THREE.HemisphereLight( 0xffffff, 0x444444 );
-				light.position.set( 0, 200, 0 );
-				scene.add( light );
-
-				light = new THREE.DirectionalLight( 0xffffff );
-				light.position.set( 0, 200, 100 );
-				light.castShadow = true;
-				light.shadow.camera.top = 180;
-				light.shadow.camera.bottom = - 100;
-				light.shadow.camera.left = - 120;
-				light.shadow.camera.right = 120;
-				scene.add( light );
-
-				// scene.add( new CameraHelper( light.shadow.camera ) );
-
-				// ground
-				var mesh = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2000, 2000 ), new THREE.MeshPhongMaterial( { color: 0x999999, depthWrite: false } ) );
-				mesh.rotation.x = - Math.PI / 2;
-				mesh.receiveShadow = true;
-				scene.add( mesh );
-
-				var grid = new THREE.GridHelper( 2000, 20, 0x000000, 0x000000 );
-				grid.material.opacity = 0.2;
-				grid.material.transparent = true;
-				scene.add( grid );
-
-				// model
-				var loader = new FBXLoader();
-				loader.load( filename, function ( object ) {
-
-					mixer = new THREE.AnimationMixer( object );
-					console.log(object)
-
-					
-					var action = mixer.clipAction( object.animations[ 0 ] );
-					action.play();
-
-					object.traverse( function ( child ) {
-
-						if ( child.isMesh ) {
-
-							child.castShadow = true;
-							child.receiveShadow = true;
-
-						}
-
-					} );
-
-					scene.add( object );
-
-					// add skeleton
-					var skeleton = new THREE.SkeletonHelper( object);
-					skeleton.visible =true;
-					scene.add(skeleton);
+					}
 
 				} );
 
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( parents.offsetWidth, parents.offsetHeight );
-				renderer.shadowMap.enabled = true;
-				container.appendChild( renderer.domElement );
+				self.scene.add( object );
+				// add skeleton
+				var skeleton = new THREE.SkeletonHelper( object);
+				skeleton.visible =true;
+				self.scene.add(skeleton);
+				console.log(skeleton);
+				console.log(skeleton.boneInverses);
+			} );
+		},
+		loadRenderer:function(parentsElement){
+			if(this.scene == null){consoel.log("scene null"); return;}
+			if(this.camera == null){consoel.log("camera null"); return;}
+			if(this.canvas == null){consoel.log("canvas null"); return;}
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.target.set( 0, 100, 0 );
-				controls.update();
+			this.renderer = new THREE.WebGLRenderer( { antialias: true } );
+			this.renderer.setPixelRatio(window.devicePixelRatio);
+			this.renderer.setSize(parentsElement.offsetWidth, parentsElement.offsetHeight);
+			this.renderer.shadowMap.enabled = true;
+			this.canvas.appendChild(this.renderer.domElement);
 
-				window.addEventListener( 'resize', onWindowResize, false );
+			this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+			this.controls.target.set(0,100,0);
+			this.controls.update();
+
+			let self = this
+			function onWindowResize() {
+				self.camera.aspect =  parentsElement.offsetWidth/ parentsElement.offsetHeight;
+				self.camera.updateProjectionMatrix();
+
+				self.renderer.setSize( parentsElement.offsetWidth ,parentsElement.offsetHeight );
 			}
 
-			//
+			window.addEventListener( 'resize', onWindowResize, false );
+		},
+		startAnimate:function(){
+				requestAnimationFrame( this.startAnimate );
+				var delta = this.clock.getDelta();
 
-			function animate() {
+				if ( this.mixer ) this.mixer.update( delta );
 
-				requestAnimationFrame( animate );
+				this.renderer.render( this.scene, this.camera );
+		},
+		screenInit:function(){
+			const parentsId = "viewer-"+ this.screenId
+			const filename = this.filename
 
-				var delta = clock.getDelta();
-
-				if ( mixer ) mixer.update( delta );
-
-				renderer.render( scene, camera );
-            }
-            init();
-			animate();
+			let parentsElement = document.getElementById(parentsId)
+			this.loadClock()
+			this.loadCanvas(parentsElement)
+			this.loadCamera(parentsElement)
+			this.loadScene()
+			this.loadLight()
+			this.loadGround()
+			this.loadModel(filename)
+			this.loadRenderer(parentsElement)
+		}
+	},
+    mounted(){
+		this.screenInit()
+		this.startAnimate()
     }
 }
 </script>
