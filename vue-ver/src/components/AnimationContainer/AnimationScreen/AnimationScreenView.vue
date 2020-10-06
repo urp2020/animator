@@ -90,7 +90,9 @@ export default {
 				loader.load( filename, function ( object ) {
 
 					mixer = new THREE.AnimationMixer( object );
+					console.log(object)
 
+					
 					var action = mixer.clipAction( object.animations[ 0 ] );
 					action.play();
 
@@ -106,6 +108,11 @@ export default {
 					} );
 
 					scene.add( object );
+
+					// add skeleton
+					var skeleton = new THREE.SkeletonHelper( object);
+					skeleton.visible =true;
+					scene.add(skeleton);
 
 				} );
 
