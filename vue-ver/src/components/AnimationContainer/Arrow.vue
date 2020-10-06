@@ -35,9 +35,11 @@ export default {
     },
     methods:{
         disconnect(){
+            // event handler - when user delete arrow (by clicking the arrow)
             this.$emit('disconnect',[this.from,this.to])
         },
         showTransitionCondition(){
+            // event handler - when user watch the transition condition (by hovering arrow)
             this.$emit('showTransitionCondition',[this.from,this.to] )
         }
     },

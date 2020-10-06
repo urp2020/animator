@@ -1,3 +1,5 @@
+
+
 <template>
     <div class='animation-container'>
         <div class='storyboard-control-board'>
@@ -14,15 +16,15 @@
                 >
                 </screen>
             </ul>
-               <arrow
-                    v-for="(value,key) in connections"
-                    v-bind:key="key"
-                    v-bind:from="value.from"
-                    v-bind:to="value.to"
-                    v-bind:transitionCondition="value.transitionCondition"
-                    @disconnect="disconnect"
-                >
-                </arrow>
+            <arrow
+                v-for="(value,key) in connections"
+                v-bind:key="key"
+                v-bind:from="value.from"
+                v-bind:to="value.to"
+                v-bind:transitionCondition="value.transitionCondition"
+                @disconnect="disconnect"
+            >
+            </arrow>
         </div>
         <arrowModal v-if="showModal" @close="getTransitionCondition"></arrowModal>
     </div>
@@ -31,9 +33,9 @@
 
 
 <script>
-import screen from './AnimationContainer/AnimationScreen'
-import arrow from './AnimationContainer/Arrow'
-import arrowModal from './AnimationContainer/ArrowModal'
+import screen from './AnimationContainer/AnimationScreen'       // FBX viewers
+import arrow from './AnimationContainer/Arrow'                  // Drawing arrow components
+import arrowModal from './AnimationContainer/ArrowModal'        // To select options to draw arrows
 
 
 
@@ -46,12 +48,15 @@ export default {
     },
     data(){
         return{
-            animations:[],
-            connections:{},
-            connectionState: false,
-            connectionReadyScreenNumber: null,
-            transitionCondition:{},
-            showModal:false,
+            animations:[],                      // data for 'screen' components
+                                                // {id:, filename:, rotateRadius:, rotateAngle:, rotateReverseAngle}
+                                                // rotateRadius, rotateAngle, rotateReveseAngle are position informations of screen for circular layout
+
+            connections:{},                     // data for 'arrow' components
+            connectionState: false,             // boolean state whether the state is ready to connect the arrow to the end node(screen)
+            connectionReadyScreenNumber: null,  // the node id number to start arrow
+            transitionCondition:{},             // information that arrow has to change the state in FSM of FBX storyboard
+            showModal:false,                    // boolean state to show the modal
         }
     },
     computed:{
@@ -68,9 +73,12 @@ export default {
     },
     methods:{
         calculateRadius:function(numOfItem, factor=1){
+            // function to calculate the proper radius of circular layout for FBX screens
             return factor*Math.sqrt(numOfItem)*8+"em"
         },
         calculateAngle:function(idx, totalNumOfItem){
+            // function to calculate proper angles for FBX screens
+
             const startAngle = -90
             const type = 1 // circle type -> 1: whole, 0.5 :half, 0.25 : quarter
             const angle = 360*type/totalNumOfItem
@@ -78,6 +86,8 @@ export default {
         },
 
         pushScreen:function(){
+            // event handler - when user push the button to add new FBX screen
+
             //add screen
             this.animations.push({
                 id:this.animations.length,
@@ -98,6 +108,8 @@ export default {
             return this.animations.length
         },
         popScreen:function(){
+            // event handler - when user delete the last FBX screen
+
             const val = this.animations.pop()
             const deletedId = val.id
             //re calculate positions of screen items
@@ -117,12 +129,19 @@ export default {
             return val
         },
         connect:function(messageFromChild){
+            // event handler - when user push the 'connect' button in 'screen' control-board
+
+
             let screenIdNumber = messageFromChild
             if(!this.connectionState){
+                // set start node for drawing arrow
+
                 this.connectionReadyScreenNumber = screenIdNumber
                 this.connectionState = true
                 this.showModal = true
             }else if(this.connectionReadyScreenNumber < this.animations.length){
+                // set destination node for drawing arrow
+
                 let from = this.connectionReadyScreenNumber
                 let to = screenIdNumber
                 
@@ -141,10 +160,14 @@ export default {
             }
         },
         disconnect:function(messageFromChild){
+            // event handler - when user delete the arrow
+
             let key = messageFromChild[0]+"-"+messageFromChild[1]
             this.$delete(this.connections, key)
         },
         getTransitionCondition:function(messageFromChild){
+            // event handler - when user inputs the transition information via modal
+
             this.transitionCondition = messageFromChild
             this.showModal = false
         },

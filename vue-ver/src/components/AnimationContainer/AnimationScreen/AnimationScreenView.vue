@@ -24,15 +24,14 @@ export default {
         scene:null,
     },
     mounted(){
+			// when create new FBX 'screen'
+			// load the FBX file simulataneously
+
             let self = this
             const parentsId = "viewer-"+self.screenId
             const filename = self.filename
             console.log(filename)
             var parents = document.getElementById(parentsId)
-            console.log(parents)
-            console.log(parentsId)
-            console.log(parents.offsetWidth)
-            console.log(parents.offsetHeight)
             var container, controls;
 			var camera, scene, renderer, light;
 

@@ -47,6 +47,8 @@ export default {
     },
     methods:{
         connect:function(messageFromChild){
+            // event handler - when user push the 'connect' button
+            // just passing the event from child to the parent component 
             this.$emit('connect',messageFromChild)
         }
     },

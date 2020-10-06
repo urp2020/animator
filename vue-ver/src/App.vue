@@ -8,6 +8,12 @@
       gridRowEnd:2,
       }"
     >{{ msg }}</h1>
+
+    <!-- Top componetn of this app -->
+    <!-- 
+      COMMON RULES OF THIS PROJECT
+      - layout and shape is defined in inline style 
+    -->
     <AnimationContainer
       v-bind:style="{
       gridColumnStart: 1,

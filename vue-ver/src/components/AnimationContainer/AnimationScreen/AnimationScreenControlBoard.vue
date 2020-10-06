@@ -1,7 +1,6 @@
 <template>
         <div class="controlBoard">
             <button v-on:click="connect">Connect</button>
-            <button v-on:click="open">open file</button>
         </div>
 </template>
 
@@ -14,8 +13,6 @@ export default {
         connect:function(){
             this.$emit('connect',this.source.id)
         },
-        open:function(){
-        }
     }
 }
 </script>
