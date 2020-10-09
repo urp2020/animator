@@ -16,6 +16,7 @@
     "ngx-domarrow": "^0.7.2",
     "three": "^0.121.1",
     "three-fbx-loader": "^1.0.3",
+    "three-ik": "^0.1.0",
     "v-tooltip": "^2.0.3",
     "vue": "^2.5.11"
   },

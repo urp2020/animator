@@ -7,6 +7,7 @@
 import * as THREE from 'three/build/three.module.js'
 import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { IK, IKChain, IKJoint, IKBallConstraint, IKHelper } from 'three-ik';
 
 export default {
     name:"ScreenViewer",
@@ -20,6 +21,8 @@ export default {
         }
     },
     data:{
+		action:null,
+		bones:null,
 		canvas:null,
 		camera:null,
 		scene:null,
@@ -76,33 +79,33 @@ export default {
 		},
 		loadModel:function(filename){
 			if(this.scene == null){consoel.log("scene null"); return;}
-			let self = this
+			var self = this
 			var loader = new FBXLoader();
 			loader.load( filename, function ( object ) {
-				self.mixer = new THREE.AnimationMixer( object );
-				console.log(object)
-
-				var action = self.mixer.clipAction( object.animations[ 0 ] );
-				action.play();
 
 				object.traverse( function ( child ) {
-
 					if ( child.isMesh ) {
-
 						child.castShadow = true;
 						child.receiveShadow = true;
 
 					}
-
 				} );
-
 				self.scene.add( object );
 				// add skeleton
 				var skeleton = new THREE.SkeletonHelper( object);
 				skeleton.visible =true;
 				self.scene.add(skeleton);
-				console.log(skeleton);
-				console.log(skeleton.boneInverses);
+
+				self.bones = skeleton.bones
+
+				self.mixer = new THREE.AnimationMixer( object );
+				var action = self.mixer.clipAction( object.animations[ 0 ] );
+				//https://threejs.org/docs/#api/en/animation/AnimationAction
+				console.log(action)
+				action.loop = THREE.LoopOnce
+				//action.loop = THREE.LoopRepeat
+				action.play();
+
 			} );
 		},
 		loadRenderer:function(parentsElement){
@@ -133,9 +136,7 @@ export default {
 		startAnimate:function(){
 				requestAnimationFrame( this.startAnimate );
 				var delta = this.clock.getDelta();
-
 				if ( this.mixer ) this.mixer.update( delta );
-
 				this.renderer.render( this.scene, this.camera );
 		},
 		screenInit:function(){
