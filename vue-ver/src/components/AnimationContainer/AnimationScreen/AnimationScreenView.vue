@@ -1,6 +1,8 @@
 <template>
         <div class="viewer" :id="'viewer-'+screenId">
+			<span v-if="isPlaying"></span>
         </div>
+		
 </template>
 
 <script>
@@ -8,6 +10,7 @@ import * as THREE from 'three/build/three.module.js'
 import {FBXLoader} from 'three/examples/jsm/loaders/FBXLoader'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { IK, IKChain, IKJoint, IKBallConstraint, IKHelper } from 'three-ik';
+import {MotorMovementFromAnimation, sort2FrameMovement} from './../../../logic/AnimationExtractor'
 
 export default {
     name:"ScreenViewer",
@@ -18,11 +21,14 @@ export default {
         filename:{
             type:String,
             required:true
-        }
+		},
+		isPlaying:{
+			type:Boolean,
+			required:true
+		}
     },
     data:{
-		action:null,
-		bones:null,
+		action :null,
 		canvas:null,
 		camera:null,
 		scene:null,
@@ -83,6 +89,7 @@ export default {
 			var loader = new FBXLoader();
 			loader.load( filename, function ( object ) {
 
+				//load object from FBX
 				object.traverse( function ( child ) {
 					if ( child.isMesh ) {
 						child.castShadow = true;
@@ -91,21 +98,31 @@ export default {
 					}
 				} );
 				self.scene.add( object );
+
 				// add skeleton
 				var skeleton = new THREE.SkeletonHelper( object);
 				skeleton.visible =true;
 				self.scene.add(skeleton);
 
-				self.bones = skeleton.bones
-
 				self.mixer = new THREE.AnimationMixer( object );
 				var action = self.mixer.clipAction( object.animations[ 0 ] );
-				//https://threejs.org/docs/#api/en/animation/AnimationAction
-				console.log(action)
-				action.loop = THREE.LoopOnce
-				//action.loop = THREE.LoopRepeat
-				action.play();
 
+				
+				//https://threejs.org/docs/#api/en/animation/AnimationAction
+				//action.loop = THREE.LoopOnce
+				//action.loop = THREE.LoopRepeat
+
+				// change quaternion move to euler angles
+				let move = MotorMovementFromAnimation(object);
+				move = sort2FrameMovement(move);
+
+				// send movment data to the parent node
+				// parent node generates src code file
+				self.$emit('registerMovement',[self.screenId, move])
+				if(self.isPlaying){
+					action.play();
+				}
+				self.action = action;
 			} );
 		},
 		loadRenderer:function(parentsElement){
@@ -157,7 +174,16 @@ export default {
     mounted(){
 		this.screenInit()
 		this.startAnimate()
-    }
+	},
+	beforeUpdate(){
+		console.log(this.isPlaying)
+		if(this.isPlaying){
+			this.action.paused = false
+			this.action.play()
+		}else{
+			this.action.paused = true
+		}
+	},
 }
 </script>
 

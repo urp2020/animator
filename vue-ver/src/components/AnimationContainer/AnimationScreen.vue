@@ -7,8 +7,10 @@
                 gridRowStart:1,
                 gridRowEnd:2,
             }"
-            v-bind:screenId="source.id"
+            v-bind:screenId="source.id" 
             v-bind:filename="source.filename"
+            v-bind:isPlaying="isPlaying"
+            @registerMovement="registerMovement"
         />
         <controlBoard
             v-bind:style="{
@@ -18,7 +20,9 @@
                 gridRowEnd:3,
             }"
             v-bind:source="source"
+            v-bind:isPlaying="isPlaying"
             @connect="connect"
+            @playAndPause="playAndPause"
         />
     </li>
 </template>
@@ -35,8 +39,10 @@ export default {
         viewer,
         controlBoard
     },
-    data:{
-
+    data(){
+        return{
+            isPlaying:true
+        }
     },
     computed:{
         position(){
@@ -50,6 +56,14 @@ export default {
             // event handler - when user push the 'connect' button
             // just passing the event from child to the parent component 
             this.$emit('connect',messageFromChild)
+        },
+        playAndPause:function(messageFromChild){
+            console.log(this.isPlaying)
+            this.isPlaying = !this.isPlaying
+        },
+        registerMovement:function(messageFromChild){
+            // passing the movment array to the parent contianer
+            this.$emit('registerMovement',messageFromChild)
         }
     },
 }

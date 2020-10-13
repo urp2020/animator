@@ -13,6 +13,7 @@
                     v-bind:key="film.id"
                     v-bind:source="film"
                     @connect="connect"
+                    @registerMovement="registerMovement"
                 >
                 </screen>
             </ul>
@@ -49,7 +50,7 @@ export default {
     data(){
         return{
             animations:[],                      // data for 'screen' components
-                                                // {id:, filename:, rotateRadius:, rotateAngle:, rotateReverseAngle}
+                                                // {id:, filename:, rotateRadius:, rotateAngle:, rotateReverseAngle, movement}
                                                 // rotateRadius, rotateAngle, rotateReveseAngle are position informations of screen for circular layout
 
             connections:{},                     // data for 'arrow' components
@@ -95,6 +96,7 @@ export default {
                 rotateRadius: this.calculateRadius(this.animations.length+1), // becuase item will be pushed
                 rotateAngle: this.calculateAngle(this.animations.length-1, this.animations.length),
                 rotateReverseAngle: -1*this.calculateAngle(this.animations.length-1, this.animations.length),
+                movement:null,
             })
 
 
@@ -171,6 +173,12 @@ export default {
             this.transitionCondition = messageFromChild
             this.showModal = false
         },
+        registerMovement:function(messageFromChild){
+            let screenId, movement;
+            [screenId, movement] = messageFromChild
+            this.animations[screenId].movement = movement
+            console.log(this.animations)
+        }
     }
 
 
