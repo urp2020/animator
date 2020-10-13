@@ -3,8 +3,9 @@
 <template>
     <div class='animation-container'>
         <div class='storyboard-control-board'>
-            <button v-on:click="pushScreen">+</button>
-            <button v-on:click="popScreen">-</button>
+            <button class="btn" v-on:click="pushScreen">+</button>
+            <button class="btn"  v-on:click="popScreen">-</button>
+            <button  class="btn" >generate</button>
         </div>
         <div class="storyboard">
             <ul :style="[positionAndSize]">
@@ -66,7 +67,6 @@ export default {
             const height = this.calculateRadius(this.animations.length, 2)
             return{
                 marginTop: distance,
-                marginLeft: distance,
                 width:height,
                 height:height,
             }
@@ -177,7 +177,6 @@ export default {
             let screenId, movement;
             [screenId, movement] = messageFromChild
             this.animations[screenId].movement = movement
-            console.log(this.animations)
         }
     }
 
@@ -203,8 +202,32 @@ export default {
         grid-column-end: 4;
         grid-row-start: 1;
         grid-row-end:2;
+        .btn{
+            margin-right: .5em;
+            font-size: 1.3em;
+            padding:.5em 1em;
+            transition: box-shadow .3s;
+            background: none;
+
+            border: 2px solid black;
+            border-radius: 5px;
+            font: inherit;
+            line-height: 1;
+    
+            color: black;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+
+            &:hover{
+                box-shadow: 5px 5px  rgba(0, 0, 0, 0.74); 
+            }
+        }
     }
     .storyboard{
+        margin-left: auto;
+        margin-right: auto;
+        width:10%;
         grid-column-start: 1;
         grid-column-end: 4;
         grid-row-start: 2;

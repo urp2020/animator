@@ -26,7 +26,6 @@ export function MotorMovementFromAnimation(object){
              }
         }
     )
-    console.log(movement)
     return movement
 }
 
@@ -50,7 +49,6 @@ export function sort2FrameMovement(movement){
         let angles = movement.map( (m)=>m.values[i] );
         frameMovments.push(angles);
     }
-    console.log(frameMovments)
     return frameMovments
 }
 

@@ -189,8 +189,12 @@ export default {
 
 <style lang="scss" scoped>
 .viewer{
-    background-color:red;
+   	//background-color:red;
     height:100%;
     width:100%;
+	transition: background-color .3s;
+	&:hover{
+		background-color: cyan;;
+	}
 }
 </style>

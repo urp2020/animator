@@ -14,10 +14,10 @@
         />
         <controlBoard
             v-bind:style="{
-                gridColumnStart:1,
-                gridColumnEnd:4,
-                gridRowStart:2,
-                gridRowEnd:3,
+                gridColumnStart:4,
+                gridColumnEnd:6,
+                gridRowStart:1,
+                gridRowEnd:2,
             }"
             v-bind:source="source"
             v-bind:isPlaying="isPlaying"
@@ -41,7 +41,7 @@ export default {
     },
     data(){
         return{
-            isPlaying:true
+            isPlaying:false
         }
     },
     computed:{
@@ -74,10 +74,14 @@ export default {
     position:absolute;
 
     display:grid;
-    grid-template-columns: repeat(3,1fr);
-    grid-template-rows: 4fr 1fr;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(1,1fr);
 
     width:250px;
     height:250px;
+
+    &:hover .controlBoard{
+		opacity: 1;
+	}
 }
 </style>
