@@ -5,7 +5,7 @@
         <div class='storyboard-control-board'>
             <button class="btn" v-on:click="pushScreen">+</button>
             <button class="btn"  v-on:click="popScreen">-</button>
-            <button  class="btn" >generate</button>
+            <button  class="btn" v-on:click="generateCode">generate</button>
         </div>
         <div class="storyboard">
             <ul :style="[positionAndSize]">
@@ -130,6 +130,11 @@ export default {
             }
             return val
         },
+        generateCode:function(){
+            // event handler - when user generate code from Animation State 
+            console.log(this.connections)
+            
+        },
         connect:function(messageFromChild){
             // event handler - when user push the 'connect' button in 'screen' control-board
 
@@ -177,7 +182,7 @@ export default {
             let screenId, movement;
             [screenId, movement] = messageFromChild
             this.animations[screenId].movement = movement
-        }
+        },
     }
 
 
