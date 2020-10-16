@@ -114,10 +114,10 @@ export default {
 
 				// change quaternion move to euler angles
 				let move = MotorMovementFromAnimation(object);
-				move = sort2FrameMovement(move);
+				move = sort2FrameMovement(move); // movement array sorted by index of keyframes
 
 				// send movment data to the parent node
-				// parent node generates src code file
+				// parent node  will generate sourcecode file for the arduino etc
 				self.$emit('registerMovement',[self.screenId, move])
 				if(self.isPlaying){
 					action.play();

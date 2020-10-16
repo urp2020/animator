@@ -131,7 +131,7 @@ export default {
             return val
         },
         generateCode:function(){
-            // event handler - when user generate code from Animation State 
+            // event handler - when user generate code from Animation State
             console.log(this.connections)
             
         },
