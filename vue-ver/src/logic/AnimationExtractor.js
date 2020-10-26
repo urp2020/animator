@@ -40,6 +40,8 @@ export function sort2FrameMovement(movement){
     // angle2-1,    angle2-2,   angle2-3,   ... ,   angle2-N
     // ...
     // angleM-1,    angleM-2,   angleM-3,   ... ,   angleM-N    
+    // 
+    // it looks like M by N matrix
 
     let frameMovments = [];
     const frameNum = movement[0].numOfFrames;

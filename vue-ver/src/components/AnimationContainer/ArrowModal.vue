@@ -14,6 +14,15 @@
                     <slot name="body">
                         <form>
                           <div class="option">
+                            <label for="f-bone">Bone:</label>
+                            <select id="f-bone" name="f-bone" ref="forceBone">
+                              <option
+                                v-for ="boneName in bones"
+                                v-bind:key="boneName"
+                                :value="boneName">{{boneName}}</option>
+                            </select>
+                          </div>
+                          <div class="option">
                             <label for="f-dir">Force direction :</label>
                             <select id="f-dir" name="f-dir" ref="forceDirection">
                                 <option value="cw">clockwise</option>
@@ -46,11 +55,13 @@
 <script>
 export default {
     name:"ArrowModal",
+    props:['bones'],
     methods:{
         closeModal(){
             let forceDirection = this.$refs.forceDirection.value
             let forceType = this.$refs.forceType.value
-            this.$emit('close',{forceDirection:forceDirection, forceType:forceType})
+            let forceBone = this.$refs.forceBone.value
+            this.$emit('close',{forceDirection:forceDirection, forceType:forceType, forceBone:forceBone})
         }
     }
 }

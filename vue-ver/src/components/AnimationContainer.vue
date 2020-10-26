@@ -28,7 +28,7 @@
             >
             </arrow>
         </div>
-        <arrowModal v-if="showModal" @close="getTransitionCondition"></arrowModal>
+        <arrowModal v-if="showModal" v-bind:bones="transitionBones" @close="getTransitionCondition"></arrowModal>
     </div>
 </template>
 
@@ -57,6 +57,7 @@ export default {
             connections:{},                     // data for 'arrow' components
             connectionState: false,             // boolean state whether the state is ready to connect the arrow to the end node(screen)
             connectionReadyScreenNumber: null,  // the node id number to start arrow
+            transitionBones:null,               // bones list to deliver to arrowModal
             transitionCondition:{},             // information that arrow has to change the state in FSM of FBX storyboard
             showModal:false,                    // boolean state to show the modal
         }
@@ -140,6 +141,7 @@ export default {
 
                 this.connectionReadyScreenNumber = screenIdNumber
                 this.connectionState = true
+                this.transitionBones = this.animations[screenIdNumber].movement[0]
                 this.showModal = true
             }else if(this.connectionReadyScreenNumber < this.animations.length){
                 // set destination node for drawing arrow
@@ -154,7 +156,6 @@ export default {
                 this.connectionReadyScreenNumber = null
                 this.transitionCondition = null
                 this.showModal = false
-                
             }else{
                 // what if user delete last node after select it as connectionNode
                 this.connectionState = false
