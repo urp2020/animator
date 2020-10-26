@@ -47,13 +47,13 @@ export default {
 			parentsElement.appendChild(this.canvas)
 		},
 		loadCamera:function(parentsElement){
-			this.camera = new THREE.PerspectiveCamera( 45, parentsElement.offsetWidth / parentsElement.offsetHeight, 1, 2000 );
+			this.camera = new THREE.PerspectiveCamera( 45, parentsElement.offsetWidth / parentsElement.offsetHeight, 1, 20000 );
 			this.camera.position.set( 100, 200, 300 );
 		},
 		loadScene:function(){
 			this.scene = new THREE.Scene();
 			this.scene.background = new THREE.Color( 0xa0a0a0 );
-			this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
+			//this.scene.fog = new THREE.Fog( 0xa0a0a0, 200, 1000 );
 		},
 		loadLight:function(){
 			if(this.scene == null){consoel.log("scene null"); return;}
@@ -114,10 +114,10 @@ export default {
 
 				// change quaternion move to euler angles
 				let move = MotorMovementFromAnimation(object);
-				move = sort2FrameMovement(move);
+				move = sort2FrameMovement(move); // movement array sorted by index of keyframes
 
 				// send movment data to the parent node
-				// parent node generates src code file
+				// parent node  will generate sourcecode file for the arduino etc
 				self.$emit('registerMovement',[self.screenId, move])
 				if(self.isPlaying){
 					action.play();
