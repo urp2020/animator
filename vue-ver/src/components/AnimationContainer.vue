@@ -32,16 +32,16 @@
         </div>
         <div class="storyboard-control-board"
             v-bind:style="{
-                gridColumnStart :3,
+                gridColumnStart :4,
                 gridColumnEnd:5,
                 gridRowStart:1,
                 gridRowEnd:2,
             }"
         >
             <input id="upload-file" type="file" accept=".fbx" title=" Select File(FBX only) " v-on:change="pushScreen($event)"/>
-            <button class="btn"  v-on:click="popScreen">-</button>
-            <button  class="btn" v-on:click="generateCode">generate</button>
             <button class="btn" v-on:click="save">Save</button>
+            <button  class="btn" v-on:click="generateCode">generate</button>
+            <button class="btn"  v-on:click="popScreen">pop</button>
         </div>
         <codeBox 
             v-bind:animations="animations"
