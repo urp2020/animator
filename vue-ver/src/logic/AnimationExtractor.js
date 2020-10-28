@@ -54,9 +54,16 @@ export function sort2FrameMovement(movement){
     return frameMovments
 }
 
-export function genearteStringFromMovements(movementStates){
+export function genearteTextFromMovements(movementStates){
     // save rotation values in txt file to read it from SD card
     // each line means motors' movements in '1' keyframe
     // --
 
+    let text = "";
+    movementStates.forEach(element => {
+        text = text.concat(String(element)+"\n");
+    });
+
+    console.log(text);
+    return text;
 }

@@ -41,6 +41,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -48,11 +49,13 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  height:100vh; 
 }
 
 #app{
+  margin: 5em;
   display:grid;
-  grid-template-rows: 1r 4fr 1fr;
+  grid-template-rows: 1fr 10fr;
   grid-template-columns: repeat(3, 1fr);
   h1{
 

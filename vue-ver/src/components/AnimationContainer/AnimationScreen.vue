@@ -8,7 +8,7 @@
                 gridRowEnd:2,
             }"
             v-bind:screenId="source.id" 
-            v-bind:filename="source.filename"
+            v-bind:file="source.file"
             v-bind:isPlaying="isPlaying"
             @registerMovement="registerMovement"
         />

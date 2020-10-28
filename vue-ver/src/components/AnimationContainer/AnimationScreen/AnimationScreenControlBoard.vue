@@ -4,8 +4,8 @@
                     v-bind:style="{
                         gridColumnStart:1,
                         gridColumnEnd:2,
-                        gridRowStart:1,
-                        gridRowEnd:2,
+                        gridRowStart:7,
+                        gridRowEnd:8,
                     }"
                     >Connect</button>
             <button class="btn playbtn" v-if="isPlaying" v-on:click="playAndPause">Pause</button>
@@ -41,8 +41,8 @@ export default {
     padding-left:1em;
     display:grid;
     grid-template-columns: repeat(1,1fr);
-    grid-template-rows: repeat( 6,1fr);
-    grid-row-gap:1em;
+    grid-template-rows: repeat( 8,1fr);
+    grid-row-gap:0.25em;
     .btn{
         transition: box-shadow .3s;
         background: none;
@@ -65,8 +65,8 @@ export default {
     .playbtn{
         grid-column-start: 1;
         grid-column-end: 2;
-        grid-row-start: 2;
-        grid-row-end: 3;
+        grid-row-start: 8;
+        grid-row-end: 9;
        
     }
 }

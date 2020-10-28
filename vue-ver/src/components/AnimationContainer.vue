@@ -2,12 +2,14 @@
 
 <template>
     <div class='animation-container'>
-        <div class='storyboard-control-board'>
-            <button class="btn" v-on:click="pushScreen">+</button>
-            <button class="btn"  v-on:click="popScreen">-</button>
-            <button  class="btn" v-on:click="generateCode">generate</button>
-        </div>
-        <div class="storyboard">
+        <div class="storyboard"
+            v-bind:style="{        
+                gridColumnStart : 1,
+                gridColumnEnd : 3,
+                gridRowStart : 1,
+                gridRowEnd : 4,
+            }"
+        >
             <ul :style="[positionAndSize]">
                 <screen
                     v-for="film in animations"
@@ -28,6 +30,29 @@
             >
             </arrow>
         </div>
+        <div class="storyboard-control-board"
+            v-bind:style="{
+                gridColumnStart :3,
+                gridColumnEnd:5,
+                gridRowStart:1,
+                gridRowEnd:2,
+            }"
+        >
+            <input id="upload-file" type="file" accept=".fbx" title=" Select File(FBX only) " v-on:change="pushScreen($event)"/>
+            <button class="btn"  v-on:click="popScreen">-</button>
+            <button  class="btn" v-on:click="generateCode">generate</button>
+            <button class="btn" v-on:click="save">Save</button>
+        </div>
+        <codeBox 
+            v-bind:animations="animations"
+            v-bind:style="{
+                gridColumnStart:3,
+                gridColumnEnd:5,
+                gridRowStart:2,
+                gridRowEnd:4
+            }"
+            v-bind:code="code"
+        ></codeBox>
         <arrowModal v-if="showModal" v-bind:bones="transitionBones" @close="getTransitionCondition"></arrowModal>
     </div>
 </template>
@@ -35,18 +60,22 @@
 
 
 <script>
+import { genearteTextFromMovements } from '../logic/AnimationExtractor'
 import screen from './AnimationContainer/AnimationScreen'       // FBX viewers
 import arrow from './AnimationContainer/Arrow'                  // Drawing arrow components
 import arrowModal from './AnimationContainer/ArrowModal'        // To select options to draw arrows
-
-
+import codeBox from './AnimationContainer/CodeBox'              // textbox where the generated arduino code is displayed
+import JSzip from 'jszip';
+import { saveAs } from 'file-saver';
+import {templateCode} from './../assets/templateCode'
 
 export default {
     name:'AnimationContainer',
     components:{
         screen,
         arrow,
-        arrowModal
+        arrowModal,
+        codeBox
     },
     data(){
         return{
@@ -60,6 +89,7 @@ export default {
             transitionBones:null,               // bones list to deliver to arrowModal
             transitionCondition:{},             // information that arrow has to change the state in FSM of FBX storyboard
             showModal:false,                    // boolean state to show the modal
+            code:``,
         }
     },
     computed:{
@@ -87,20 +117,20 @@ export default {
             return angle*idx+startAngle
         },
 
-        pushScreen:function(){
+        pushScreen:function(event){
             // event handler - when user push the button to add new FBX screen
-
+            const file = event.target.files[0]
             //add screen
             this.animations.push({
                 id:this.animations.length,
-                filename:"./src/assets/Walking.fbx",
+                file : file,
                 rotateRadius: this.calculateRadius(this.animations.length+1), // becuase item will be pushed
                 rotateAngle: this.calculateAngle(this.animations.length-1, this.animations.length),
                 rotateReverseAngle: -1*this.calculateAngle(this.animations.length-1, this.animations.length),
                 movement:null,
             })
 
-
+            console.log(this.animations)
             //re calculate tpositions of screen items
             for(let i=0; i<this.animations.length; i++){
                 const a = this.calculateAngle(i,this.animations.length)
@@ -108,6 +138,7 @@ export default {
                 this.animations[i].rotateAngle = a
                 this.animations[i].rotateReverseAngle = -1*a
             }
+            event.target.value = ""
             return this.animations.length
         },
         popScreen:function(){
@@ -133,7 +164,7 @@ export default {
         },
         generateCode:function(){
             // event handler - when user generate code from Animation State
-            console.log(this.connections)
+            this.code = templateCode
             
         },
         connect:function(messageFromChild){
@@ -184,6 +215,19 @@ export default {
             [screenId, movement] = messageFromChild
             this.animations[screenId].movement = movement
         },
+        save:function(){
+            let fileAndAnimations = this.animations.map(m=>{return [m.file.name, genearteTextFromMovements(m.movement)]})
+            let zip = new JSzip();
+            let animationFolder = zip.folder("animations");
+            fileAndAnimations.forEach(element => {
+                animationFolder.file(element[0]+".txt", element[1])
+            });
+            zip.file("code.cpp",this.code);
+            zip.generateAsync({type:"blob"}).then(function(content) {
+                // see FileSaver.js
+                saveAs(content, "animations.zip");
+            });
+        }
     }
 
 
@@ -199,16 +243,23 @@ export default {
         margin:0;
 
     }
+    height: 70vh;
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-    grid-template-rows: 1fr 4fr;
+    grid-template-columns: repeat(4,1fr);
+    grid-template-rows: 1fr 1fr 10fr;
+    grid-row-gap: 1em;
+    grid-column-gap: 1em;
 
     .storyboard-control-board{
-        grid-column-start: 1;
-        grid-column-end: 4;
-        grid-row-start: 1;
-        grid-row-end:2;
+        background-color: #f5f2f0;
+        border:2px solid black;
+        border-radius: 5px;
+        padding:1em;
+        .input{
+            float:left;
+        }
         .btn{
+            float: right;
             margin-right: .5em;
             font-size: 1.3em;
             padding:.5em 1em;
@@ -234,10 +285,6 @@ export default {
         margin-left: auto;
         margin-right: auto;
         width:10%;
-        grid-column-start: 1;
-        grid-column-end: 4;
-        grid-row-start: 2;
-        grid-row-end: 3;
     }
 }
 </style>

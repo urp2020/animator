@@ -1,6 +1,7 @@
 <template>
         <div class="viewer" :id="'viewer-'+screenId">
 			<span v-if="isPlaying"></span>
+			<div class="name">{{file.name}}</div>
         </div>
 		
 </template>
@@ -18,8 +19,7 @@ export default {
         screenId:{
             required:true
         },
-        filename:{
-            type:String,
+        file:{
             required:true
 		},
 		isPlaying:{
@@ -158,7 +158,8 @@ export default {
 		},
 		screenInit:function(){
 			const parentsId = "viewer-"+ this.screenId
-			const filename = this.filename
+			const filename = this.file.name
+			const url = URL.createObjectURL(this.file)
 
 			let parentsElement = document.getElementById(parentsId)
 			this.loadClock()
@@ -167,7 +168,7 @@ export default {
 			this.loadScene()
 			this.loadLight()
 			this.loadGround()
-			this.loadModel(filename)
+			this.loadModel(url)
 			this.loadRenderer(parentsElement)
 		}
 	},
@@ -187,14 +188,22 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .viewer{
    	//background-color:red;
     height:100%;
     width:100%;
 	transition: background-color .3s;
+	canvas{
+		border: 2px solid black;
+        border-radius: 5px;
+	}
 	&:hover{
-		background-color: cyan;;
+		
+	}
+	.name{
+		margin: 0.5em;
+		text-align: left;
 	}
 }
 </style>
