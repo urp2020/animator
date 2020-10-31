@@ -32,7 +32,7 @@
         </div>
         <div class="storyboard-control-board"
             v-bind:style="{
-                gridColumnStart :4,
+                gridColumnStart :3,
                 gridColumnEnd:5,
                 gridRowStart:1,
                 gridRowEnd:2,
@@ -255,7 +255,7 @@ export default {
         border:2px solid black;
         border-radius: 5px;
         padding:1em;
-        .input{
+        input{
             float:left;
         }
         .btn{
