@@ -14,7 +14,7 @@ export function MotorMovementFromAnimation(object){
                 let rotation = new THREE.Euler().setFromQuaternion(q,'XYZ')
 
                 // motor only has the Z-rotation
-                angles.push(rotation.z)
+                angles.push((rotation.z*180/3.1415926535897).toFixed(0)) // degree
              }
              let name = track.name.substring(0, track.name.indexOf(".quaternion"))
              return {
@@ -22,7 +22,7 @@ export function MotorMovementFromAnimation(object){
                  name : name,
                  numOfFrames : angles.length,
                  times : track.times,
-                 values : angles, // [radian]
+                 values : angles, // [degree]
              }
         }
     )

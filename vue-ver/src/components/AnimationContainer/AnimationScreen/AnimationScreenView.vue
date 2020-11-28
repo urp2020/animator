@@ -137,7 +137,9 @@ export default {
 			this.canvas.appendChild(this.renderer.domElement);
 
 			this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-			this.controls.target.set(0,100,0);
+			this.controls.enableZoom = true
+			this.controls.maxZoom = 999999.9
+			this.controls.target.set(0,10,0);
 			this.controls.update();
 
 			let self = this

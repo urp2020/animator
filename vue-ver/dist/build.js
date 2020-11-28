@@ -51985,7 +51985,7 @@ function MotorMovementFromAnimation(object) {
             var rotation = new __WEBPACK_IMPORTED_MODULE_0_three_build_three_module_js__["o" /* Euler */]().setFromQuaternion(q, 'XYZ');
 
             // motor only has the Z-rotation
-            angles.push(rotation.z);
+            angles.push((rotation.z * 180 / 3.1415926535897).toFixed(0)); // degree
         }
         var name = track.name.substring(0, track.name.indexOf(".quaternion"));
         return {
@@ -51993,7 +51993,7 @@ function MotorMovementFromAnimation(object) {
             name: name,
             numOfFrames: angles.length,
             times: track.times,
-            values: angles // [radian]
+            values: angles // [degree]
         };
     });
     return movement;
@@ -52662,7 +52662,9 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 			this.canvas.appendChild(this.renderer.domElement);
 
 			this.controls = new __WEBPACK_IMPORTED_MODULE_2_three_examples_jsm_controls_OrbitControls_js__["a" /* OrbitControls */](this.camera, this.renderer.domElement);
-			this.controls.target.set(0, 100, 0);
+			this.controls.enableZoom = true;
+			this.controls.maxZoom = 999999.9;
+			this.controls.target.set(0, 10, 0);
 			this.controls.update();
 
 			var self = this;
@@ -65641,7 +65643,7 @@ exports.push([module.i, ".animation-screen[data-v-36674278]{position:absolute;di
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_AnimationScreenView_vue__ = __webpack_require__(10);
 /* unused harmony namespace reexport */
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2812f7ca_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_AnimationScreenView_vue__ = __webpack_require__(41);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_d52c2ba2_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_AnimationScreenView_vue__ = __webpack_require__(41);
 function injectStyle (ssrContext) {
   __webpack_require__(33)
 }
@@ -65661,7 +65663,7 @@ var __vue_scopeId__ = null
 var __vue_module_identifier__ = null
 var Component = normalizeComponent(
   __WEBPACK_IMPORTED_MODULE_0__babel_loader_node_modules_vue_loader_lib_selector_type_script_index_0_AnimationScreenView_vue__["a" /* default */],
-  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_2812f7ca_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_AnimationScreenView_vue__["a" /* default */],
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_lib_template_compiler_index_id_data_v_d52c2ba2_hasScoped_false_buble_transforms_node_modules_vue_loader_lib_selector_type_template_index_0_AnimationScreenView_vue__["a" /* default */],
   __vue_template_functional__,
   __vue_styles__,
   __vue_scopeId__,
@@ -65682,7 +65684,7 @@ var content = __webpack_require__(34);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(1)("c526abf6", content, true, {});
+var update = __webpack_require__(1)("4fa52d18", content, true, {});
 
 /***/ }),
 /* 34 */
